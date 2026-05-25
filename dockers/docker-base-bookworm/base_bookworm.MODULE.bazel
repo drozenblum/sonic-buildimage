@@ -56,11 +56,7 @@ apt.install(
         "libgmpxx4ldbl",
         "libpcre2-8-0",
         "libyang2-dev",
-        # Runtime-only soname packages exposed for docker-base-bookworm to use
-        # instead of -dev metapackages (Option C — see BUILD.bazel comments).
-        # Each pkg lives in the lockfile already (as a transitive of the -dev
-        # variant) but rules_distroless only exposes explicit entries as a
-        # @bookworm//<pkg> bazel target. Listing them here is the bridge.
+        "libpython3.11",
         "libhiredis0.14",
         "libboost-serialization1.74.0",
         "libuuid1",
@@ -69,6 +65,7 @@ apt.install(
         "libkadm5clnt-mit12",
         "libkadm5srv-mit12",
         "libkdb5-10",
+        
         # for debug docker images.
         "gdb",
         "gdbserver",
