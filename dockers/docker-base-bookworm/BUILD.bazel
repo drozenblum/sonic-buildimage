@@ -149,6 +149,17 @@ oci_load(
     repo_tags = ["docker-base-bookworm:latest"],
 )
 
+# Tools that are expected to exist in debug containers.
+# We do not bake them into a base image, because they should be installed as a layer on top of existing containers.
+# For instance, the `docker-orchagent-dbg` container should be:
+#   - FROM docker-orchagent
+#   - install :debug-packages
+#
+# For now, binary symbols are not stripped in Bazel, so the binaries in the containers should be enough to debug.
+# Note: This is not true for binaries in `sonic-swss`.
+# These are stripped, you should include the package `@sonic_swss//:debian-debug-data` in your image.
+#
+# TODO(bazel-ready): Strip binary symbols and create versions of the containers with debug symbols.
 flatten(
     name = "debug-packages",
     tars = [
@@ -162,6 +173,10 @@ flatten(
     deduplicate = True,
 )
 
+# Rdeps necessary to run $(LIBSWSSCOMMON).
+# We don't want every target that depends on $(LIBSWSSCOMMON) to depend
+# on these transitively, because we want to avoid including duplicate packages in layers.
+# TODO(bazel-ready): Replace with a build graph when we have an automatic way to minimize layers.
 flatten(
     name = "libswsscommon_rdeps",
     deduplicate = True,
