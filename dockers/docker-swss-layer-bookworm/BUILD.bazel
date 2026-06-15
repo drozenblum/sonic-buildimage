@@ -1,12 +1,13 @@
 load("@rules_deb//distroless:defs.bzl", "flatten")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
 load("@tar.bzl", "tar")
+load("//tools/bazel/image_cleanup:defs.bzl", "cleaned_tar")
 
 flatten(
     name = "apt_deps",
     deduplicate = True,
     tars = [
-        "@bookworm//python3-dev",
+        "@bookworm//libpython3.11",
         "@bookworm//protobuf-compiler:data",
         "@bookworm//python3-protobuf:data",
         # TODO(bazel-ready): Determine if we need a different version of iputils-ping.
@@ -20,13 +21,20 @@ flatten(
     ],
 )
 
+cleaned_tar(
+    name = "apt_deps_cleaned",
+    src = ":apt_deps",
+    against = ["//dockers/docker-base-bookworm:flat_cleaned"],
+    visibility = ["//visibility:public"],
+)
+
 flatten(
     name = "rdeps",
     deduplicate = True,
     tars = [
-        "@sonic_sairedis//meta:libsaimetadata_dev_pkg",
-        "@sonic_sairedis//lib:libsairedis_dev_pkg",
-        "@sonic_dash_api//:libdashapi_dev_pkg",
+        "@sonic_sairedis//meta:libsaimetadata_pkg",
+        "@sonic_sairedis//lib:libsairedis_pkg",
+        "@sonic_dash_api//:libdashapi_pkg",
         "@sonic_swss_common//:libswsscommon_pkg",
         "@sonic_swss_common//pyext:swsscommon_pkg",
     ],
@@ -40,7 +48,7 @@ oci_image(
         "DEBIAN_FRONTEND": "noninteractive",
     },
     tars = [
-        ":apt_deps",
+        ":apt_deps_cleaned",
         "//dockers/docker-base-bookworm:libswsscommon_rdeps",
         ":rdeps",
         "@sonic_swss//:debian-data",

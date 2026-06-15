@@ -46,6 +46,7 @@ flex = use_extension(
 flex.repository(
     name = "flex",
     version = "2.6.4",
+    extra_linkopts = ["-l:libc.so.6"],
     extra_copts = [
         "-O3",
         "-Wno-format-truncation",
@@ -67,7 +68,9 @@ bison = use_extension(
 bison.repository(
     name = "bison",
     version = "3.3.2",
+    extra_linkopts = ["-l:libc.so.6"],
     extra_copts = [
+        "-Daccept=bison_accept_symbol",
         "-O3",
         "-Wno-sign-compare",
         "-Wno-discarded-qualifiers",
@@ -90,6 +93,7 @@ m4 = use_extension(
 m4.repository(
     name = "m4",
     version = "1.4.18",
+    extra_linkopts = ["-l:libc.so.6"],
     extra_copts = [
         "-O3",
         # Disable warnings that are particularities of our toolchain.

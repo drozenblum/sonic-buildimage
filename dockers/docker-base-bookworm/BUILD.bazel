@@ -3,6 +3,7 @@ load("@rules_deb//distroless:defs.bzl", "flatten", "group", "passwd")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
 load("@sonic_build_infra//python:site_packages.bzl", "site_packages")
 load("@tar.bzl", "mutate", "tar")
+load("//tools/bazel/image_cleanup:defs.bzl", "cleaned_tar")
 
 site_packages(
     name = "site-packages",
@@ -78,8 +79,10 @@ flatten(
         "@bookworm//libgomp1",
         "@bookworm//libgmpxx4ldbl",
         "@bookworm//libstdc++6",
-        "@bookworm//binutils",
-        "@bookworm//krb5-multidev",
+        "@bookworm//libgssrpc4",
+        "@bookworm//libkadm5clnt-mit12",
+        "@bookworm//libkadm5srv-mit12",
+        "@bookworm//libkdb5-10",
         ":passwd",
         ":group",
         "@bookworm//bash",
@@ -90,7 +93,6 @@ flatten(
         "@bookworm//procps",
         "@bookworm//python3",
         "@bookworm//python-is-python3",
-        "@bookworm//python3-dev",
         "@bookworm//vim-tiny",
         "@bookworm//rsyslog",
         "@bookworm//redis-tools",
@@ -105,19 +107,22 @@ flatten(
         "@bookworm//libatomic1",
         "@bookworm//libgmp10",
 
-        # Transitives
-        "@bookworm//libhiredis-dev",
-        "@libnl3//:libnl-3-dev_pkg",
-        "@libnl3//:libnl-genl-3-dev_pkg",
-        "@libnl3//:libnl-route-3-dev_pkg",
-        "@libnl3//:libnl-nf-3-dev_pkg",
-        "@bookworm//libboost-dev",
-        "@bookworm//libboost-serialization-dev",
-        "@bookworm//uuid-dev",
-        "@bookworm//libzmq3-dev",
+        "@bookworm//libhiredis0.14",
+        "@libnl3//:libnl-3_pkg",
+        "@libnl3//:libnl-genl-3_pkg",
+        "@libnl3//:libnl-route-3_pkg",
+        "@libnl3//:libnl-nf-3_pkg",
+        "@bookworm//libboost-serialization1.74.0",
+        "@bookworm//libuuid1",
         "@bookworm//libpcre2-8-0",
-        "@bookworm//libyang2-dev",
+        "@bookworm//libyang2",
     ],
+)
+
+cleaned_tar(
+    name = "flat_cleaned",
+    src = ":flat",
+    visibility = ["//visibility:public"],
 )
 
 oci_image(
@@ -131,7 +136,7 @@ oci_image(
     tars = [
         ":rootfs",
         ":rootdirslinks",
-        ":flat",
+        ":flat_cleaned",
         ":site-packages",
         "@sonic_supervisord_utilities//:dist",
     ],

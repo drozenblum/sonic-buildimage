@@ -56,6 +56,16 @@ apt.install(
         "libgmpxx4ldbl",
         "libpcre2-8-0",
         "libyang2-dev",
+        "libpython3.11",
+        "libhiredis0.14",
+        "libboost-serialization1.74.0",
+        "libuuid1",
+        "libyang2",
+        "libgssrpc4",
+        "libkadm5clnt-mit12",
+        "libkadm5srv-mit12",
+        "libkdb5-10",
+        
         # for debug docker images.
         "gdb",
         "gdbserver",

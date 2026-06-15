@@ -1,0 +1,8 @@
+load("@aspect_rules_py//py:defs.bzl", "py_binary")
+
+py_binary(
+    name = "image_cleanup",
+    srcs = ["bazel_general_image_cleanup.py"],
+    main = "bazel_general_image_cleanup.py",
+    visibility = ["//visibility:public"],
+)
